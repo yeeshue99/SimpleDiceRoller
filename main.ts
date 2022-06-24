@@ -112,14 +112,17 @@ export default class SimpleDiceRoller extends Plugin {
 	}
 
 	simulateDiceFormula(formula: string) {
-		let splitAllDice = /\d+d\d+/gi;
+		let splitAllDice = /\d?d\d+/gi;
 		let constAdditions = /(?<=\+)(\d+)(?=\+|$)/gi;
-		let diceAmount = /\d+/gi;
+		let diceAmount = /\d?/gi;
 		let diceSize = /(?<=d).*/gi;
 		let sum = 0;
 		let dice = formula.match(splitAllDice);
 		console.log(`Found ${dice.length} dice`);
 		for (let i = 0; i < dice.length; i++) {
+			if (dice[i].charAt(0) == "d" || dice[i].charAt(0) == "D") {
+				dice[i] = "1" + dice[i];
+			}
 			let amountOfDice = parseInt(dice[i].match(diceAmount)[0], 10);
 			let sizeOfDice = parseInt(dice[i].match(diceSize)[0], 10);
 			sum += this.simulateDice(amountOfDice, sizeOfDice);
