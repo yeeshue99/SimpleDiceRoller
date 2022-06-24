@@ -18,7 +18,7 @@ export default class SimpleDiceRoller extends Plugin {
 	simulateRibbonIconEl: HTMLElement | undefined = undefined;
 
 	getAllFormulas(): string[] {
-		let captureAllFormulas = /\d+d\d+.*?(?= |\n|$)/gi;
+		let captureAllFormulas = /\d?d\d+.*?(?= |\n|$)/gi;
 		const markdownView = this.app.workspace?.getActiveViewOfType(MarkdownView);
 		let allFormulas = markdownView?.getViewData().match(captureAllFormulas);
 		if (allFormulas == null) {
@@ -58,7 +58,7 @@ export default class SimpleDiceRoller extends Plugin {
 	}
 
 	calculateFormula(formula: string) {
-		let splitAllDice = /\d+d\d+/gi;
+		let splitAllDice = /\d?d\d+/gi;
 		let constAdditions = /(?<=\+)(\d+)(?=\+|$)/gi;
 		let diceAmount = /\d+/gi;
 		let diceSize = /(?<=d).*/gi;
@@ -66,6 +66,9 @@ export default class SimpleDiceRoller extends Plugin {
 		let dice = formula.match(splitAllDice);
 		console.log(`Found ${dice.length} dice`);
 		for (let i = 0; i < dice.length; i++) {
+			if (dice[i].charAt(0) == "d" || dice[i].charAt(0) == "D") {
+				dice[i] = "1" + dice[i];
+			}
 			let amountOfDice = parseInt(dice[i].match(diceAmount)[0], 10);
 			let sizeOfDice = parseInt(dice[i].match(diceSize)[0], 10);
 			sum += Math.ceil(this.averageDice(amountOfDice, sizeOfDice));
